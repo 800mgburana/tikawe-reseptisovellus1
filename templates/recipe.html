@@ -3,6 +3,8 @@
 
     <link rel="stylesheet" href="/static/main.css">
 
+    {% if recipe.status == 1 %}
+
     <head>
         <title>{{ recipe.title }}</title>
     </head>
@@ -10,8 +12,19 @@
     <body>
     <h1>{{ recipe.title }}</h1>
 
-    {{recipe.ingredients}}
-    {{recipe.instructions}}
+    {{recipe.ingredients}} <br>
+    {{recipe.instructions}} <br>
     </body>
+
+    {% if session.user_id %}
+    <a href="/edit/{{recipe.id}}">muokkaa</a>
+    <a href="/delete/{{recipe.id}}">poista</a>
+    {% endif %}
+
+    {% else %}
+
+    reseptia ei löyty
+
+    {% endif %}
 
 </html>

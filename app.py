@@ -19,17 +19,13 @@ def mainapge():
     last_visit = db.query("SELECT visited_at FROM visits ORDER BY visited_at DESC LIMIT 1")[0][0]
 
     recipes = rcps.get_recipes()
-    print("mau")
-    print(recipes)
     return render_template("mainpage.html", visits = visit_ammount, date = last_visit,
-                           recipes = recipes, n = len(recipes))
+                            recipes = recipes)
 
-@app.route("/recipe/<int:recipe_id>")
+@app.route("/recipe/<int:recipe_id>") # update recipe.html
 def show_recipe(recipe_id):
     recipe = rcps.get_recipe(recipe_id)
     return render_template("recipe.html", recipe=recipe)
-
-# recipes to be dispalyed in new to old order
 
 # user
 
@@ -65,7 +61,7 @@ def register():
             filled = {"username": username}
             return render_template("register.html", filled=filled)
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"]) # add next page?
 def login():
     if request.method == "GET":
         return render_template("login.html", next_page=request.referrer)
@@ -74,7 +70,6 @@ def login():
         global username
         username = request.form["username"]
         password = request.form["password"]
-        #next_page = request.form["next_page"] # doesnt work???
         next_page = "/"
 
         user_id = users.check_login(username, password)
@@ -100,7 +95,7 @@ def logout():
 def new():
     return render_template("new.html")
 
-@app.route("/send", methods=["POST"])
+@app.route("/send", methods=["POST"]) # add poster
 def send():
     title = request.form["title"]
     ingredients = request.form["ingredients"]
@@ -108,16 +103,44 @@ def send():
 
     db.execute("""INSERT INTO recipes(title, ingredients, instructions, status, date) 
                VALUES(?, ?, ?, 1, datetime('now'))""",
-               [title, ingredients, instructions]) # добавить кто постил 
-                                                   # -> можно будет менять и удалять посты
+               [title, ingredients, instructions]) 
+                                                   
     return redirect("/")
+
+@app.route("/edit/<int:recipe_id>", methods=["GET", "POST"])
+def edit_recipe(recipe_id):
+    recipe = rcps.get_recipe(recipe_id)
+
+    if request.method == "GET":
+        return render_template("edit.html", recipe=recipe)
+
+    if request.method == "POST":
+        title = request.form["title"]
+        ingredients = request.form["ingredients"]
+        instructions = request.form["instructions"]
+
+        rcps.update_recipe(recipe["id"], title, ingredients, instructions)
+        return redirect("/recipe/" + str(recipe_id))
+
+@app.route("/delete/<int:recipe_id>", methods=["GET", "POST"])
+def delete_recipe(recipe_id):
+    recipe = rcps.get_recipe(recipe_id)
+
+    if request.method == "GET":
+        return render_template("delete.html", recipe=recipe)
+    
+    if request.method == "POST":
+        if "continue" in request.form:
+            rcps.delete_recipe(recipe_id)
+            return redirect("/")
+        
+        else:
+            return redirect("/recipe/" + str(recipe_id))
 
 # to add
 # delete posts 
 # edit posts 
-# date of post 
-# creator
-# main page contaisn just titles, full recipes at their own pages
+# post creator
 
 @app.route("/mole")
 def mole():

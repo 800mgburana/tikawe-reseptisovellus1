@@ -19,15 +19,15 @@
 
             <li><a href="/login">Kirjaudu sisään</a></li>
 
+            {% endif %}
+
             <li><a href="/mole">myyrä</a></li>
 
-            {% endif %}
         </ul>
     </nav>
 
     <body> 
-        <p> tällä hetkeellä {{n}} reseptejä <br>
-        sivua on ladattu {{visits}} kertaa. viimeiksi ladattu {{date}}. <br> </p>
+        <p> sivua on ladattu {{visits}} kertaa. viimeiksi ladattu {{date}}. <br> </p>
 
         {% if session.user_id %} 
 
@@ -38,14 +38,16 @@
         <p> sinun on <a href="login">kirjauduttava sisään</a>, jotta voit lisätä reseptejä.  </p>
 
         {% endif %}
+
         {% for recipe in recipes %}
+        {% if recipe.status == 1 %}
         <p>
-            <a href="/recipe/{{recipe.id}}">{{recipe.title}}</a>
-            <br />
-            postattu {{recipe.date}}
+            <a href="/recipe/{{recipe.id}}">{{recipe.title}}</a> <br />
+            postattu {{recipe.date}} <br />
         </p>
         <hr />
+        {% endif %}
         {% endfor %}
-
     </body>
+
 </html>

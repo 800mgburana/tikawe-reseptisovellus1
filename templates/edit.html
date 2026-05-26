@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+    <link rel="stylesheet" href="/static/main.css">
+
+    <form action="/edit/{{ recipe.id }}" method="post">
+
+    <p>
+      Otsikko: <br />
+      <textarea name="title" rows="1" cols="40">{{ recipe.title }}</textarea>
+    </p>
+
+    <p>
+      Ainesosat: <br />
+      <textarea name="ingredients" rows="3" cols="40">{{ recipe.ingredients }}</textarea>
+    </p>
+
+    <p>
+      Ohjeet: <br />
+      <textarea name="instructions" rows="3" cols="40">{{ recipe.instructions }}</textarea>
+    </p>
+
+    <input type="submit" value="Lähetä" />
+
+  </form>
+
+</html>
